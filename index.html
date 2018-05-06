@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Portfolio Item - Start Bootstrap Template</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/portfolio-item.css" rel="stylesheet">
+
+    <style type="text/css">
+        
+        div#data_json {
+            overflow: hidden;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">Bioinformatics Demo</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://turingrepublic.com/api/array/genbank/U49845">API</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <!-- Portfolio Item Heading -->
+        <h1 class="my-4">Bioinformatics
+            <small>Quick Preview</small>
+        </h1>
+
+        <!-- Portfolio Item Row -->
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <strong><span id="data_img"></span></strong>
+                <br><br>
+                <div id="data_json" class="col-md-11">
+                    <img class="img-fluid" id="img_dna" src="https://psmag.com/.image/t_share/MTI3NTgxOTUzNTk4NzIzMzQ2/gene-expression.jpg" alt="">
+                </div>
+
+            </div>
+
+            <div class="col-md-6">
+                <h3 class="my-3">Project Description</h3>
+                <p id="response_object">A quick demo of a restful api, with the api you would be able to search these elements</p>
+                <ul>
+
+                    <li>Gene identifier</li>
+                    <li>Protein product names</li>
+                    <li>Genbank accession</li>
+                    <li>Chromosomal location</li>
+                    <li>Restriction Enzyme</li>
+
+                </ul>
+
+                <h3 class="my-3">Form Ajax form example</h3>
+
+                <form class="form-inline" method="post" action="http://turingrepublic.com/scores/insert.php"> 
+
+                    <div class="form-group">
+                        <label >Select Call</label>
+                        <select class="custom-select" name="team_1" id="select-output">
+                            <option value="gene-identifier">Gene Identifier</option>
+                            <option value="product">Protein Product</option>
+                            <option value="genbank">GenBank Accession</option>
+                            <option value="location">Chromosomal Location</option>
+                            <option value="restriction-enzyme">Restriction Enzyme</option>
+                        </select>
+                    </div>
+
+                </form>
+
+                <br>
+                <div class="row clear"></div>
+
+                <form id="form_test">
+                    <div class="form-group">
+                        <label for="search-input" id="search-label">Search Identifier</label>
+                        <input type="text" class="form-control" id="search-input" placeholder="">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+
+        </div>
+        <!-- /.row -->
+
+    </div>
+    <!-- /.container -->
+
+    <br><br><br>
+
+    <!-- Footer -->
+    <footer class="py-5 bg-dark">
+        <div class="container">
+            <p class="m-0 text-center text-white">Copyright &copy; Turing Republic 2018</p>
+        </div>
+        <!-- /.container -->
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
+
+<script type="text/javascript">
+    
+    searchItem = 'gene';
+    val = 'example';
+    url = "http://turingrepublic.com/api/json/"+ searchItem +"/" + val;
+    $(document).ready(function(event){
+
+        $('#form_test').submit(function(event){
+
+            event.preventDefault();
+            val = $('#search-input').val();
+            url = "http://turingrepublic.com/api/json/"+ searchItem +"/" + val;
+
+            // alert(url);
+            
+            if(!val){
+
+                // alert('please provide ID');
+                // return false;
+
+            }
+
+            $.ajax({
+
+                url: url,
+                dataType: 'json',
+                success: function(result){
+
+                    console.log(result);
+
+                    if(!result['result']){
+                        alert('no result found');
+                        return false;
+                    }
+                    $('#data_json').text(result['result'][1]['features']['cds']['translation']);
+
+                
+                }
+
+            });    
+            
+        });
+
+        $('#select-output').change(function(event){
+
+            switch($(this).val()) {
+
+                case "gene-identifier":
+                    $('#search-label').html('Search Gene identifier');
+                    searchItem = 'gene';
+                    break;
+
+                case "product":
+                    $('#search-label').html('Search Protein Product');
+                    searchItem = 'protein';
+                    break;
+
+                case "genbank":
+                    $('#search-label').html('Seach genBank entry');
+                    $('#search-input').val('U49845');
+                    searchItem = 'genbank';
+                    break;
+
+                case "location":
+                    $('#search-label').html('search between Chromosomal locations');
+                    searchItem = 'location';
+                    break;
+
+                case "location":
+                    $('#search-label').html('search between Chromosomal locations');
+                    searchItem = 'restriction-enzyme';
+                    break;
+
+                default:
+                    '';
+
+            }
+
+            url = "http://turingrepublic.com/api/json/"+ searchItem +"/" + val;
+            $('#data_img').html(url);
+
+
+        });
+
+    });
+
+</script>
