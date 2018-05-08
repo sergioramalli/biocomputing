@@ -1,71 +1,103 @@
 #!C:\Users\iuri\AppData\Local\Programs\Python\Python36-32\python
 #!/usr/bin/env python3
 
-import cgi
-from lib import business_layer
+import cgi,cgitb, os
+import json
+from lib import businessLogic as BL
+from lib import db_access 
+from home import getUrl
 
-print("Content-Type: text/html")    
-print()                             
- 
-import cgi,cgitb
-import os
-# cgitb.enable() #for debugging
+print("Content-Type: application/json")  
+print()          
+print()                   
+cgitb.enable() #for debugging
 
-# the query string, which contains the raw GET data
-# (For example, for http://example.com/myscript.py?a=b&c=d&e
-# this is "a=b&c=d&e")
-_GET = os.getenv("QUERY_STRING")
-_GET = "get=list&type=gene";
+try:
 
-arr = {};
-_GET = _GET.split('&')
-for x in _GET:
+	x = db_access.RetriveData()
+	_GET = getUrl();
+	result = False;
+	message = '';
+	data = {};
 
-	x = x.split('=');
-	arr[x[0]] = x[1];
-	pass
+	if 'get' not in _GET:
 
-_GET = arr;
+		raise ValueError('please provide correct url');
+		
+	else:
 
-if not _GET:
+		if _GET['get'] == 'list':
 
-	raise ValueError('no get variables provided')
+			message = _GET["type"] + ' list returned';
 
-if 'get' not in _GET:
+			if _GET['type'] == 'genes':
 
-	raise ValueError('please provide correct url');
-	
-else:
+				data = x.AcessGeneList();	
 
-	if _GET['get'] == 'list':
+			elif _GET['type'] == 'accessions':
 
-		if _GET['type'] == 'genes':
+				data = x.AccessionNumberList();
 
-			print('get list of genes');
+			elif _GET['type'] == 'protein-product':
 
-		elif _GET['type'] == 'accessions':
+				data = x.ProductNameList();
 
-			print('get list of accessions');
+			elif _GET['type'] == 'enzymes':
 
-		elif _GET['type'] == 'protein_product':
+				data = x.AccessRestriction_enzymeList();
 
-			print('protein products');
+			else:
 
-		elif _GET['type'] == 'locations':
-
-			print('locations');
-
-		elif _GET['type'] == 'enzymes':
-
-			print('enzymes');
+				data = x.AccessChromLocList();
+				result = True;
 
 		else:
 
-			print('chromloclist');
+			#dummy data
+			with open ('lib/seq.txt','r') as f:
+			    sequence = f.read().split()
 
-	else:
+			# start = 3360
+			# end = 4300
 
-		if _GET['type'] == 'accessions':
-			print('get single');
+			# parsedSequence = BL.ParseSequence(sequence)
+			# codingRegion = BL.codingRegion(start,end,parsedSequence)
+			# mrnaSequence = BL.translate(codingRegion)
+			# splitSequence = BL.CodonSequence(mrnaSequence)
+			# translatedAndAligned = BL.alignseq(splitSequence)
+			# justAminoAcids = BL.translatedSequence(splitSequence)#check this
+			# codonFrequency = BL.codonFreq(splitSequence)# need to edit to incorporate total frequencies
+			# restrictionEnzymeCutSites = BL.restrictionEnzyme('ttgtc', start, end, parsedSequence) #returned as dictionary
 
-	pass
+			if _GET['type'] == 'accessions':
+				print('get single');
+
+		pass
+
+except Exception as e:
+
+	result = False;
+	message = e;
+	exit()
+
+data = {
+	'data' : data,
+	'result' : result,
+	'message' : message
+}
+json_string = json.dumps(data)
+
+print(json_string)
+exit()
+
+# No returns 
+# print(x.ProductNameList())
+# print(x.AccessRestriction_enzymeList());
+
+
+##these are the functions to get a gene name 
+# print(x.AccessGeneData('TCF12'))
+# print(x.AccessSequenceSummary('put name here'))
+# print(x.AccessSequenceData('put name here'))
+# print(x.AccessRestriction_enzymeInfo('put name here'))
+

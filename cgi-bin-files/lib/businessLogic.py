@@ -3,10 +3,10 @@
 
 """
 Program:        chromosome15_gene_browser
-File:           buseinss_layer.py
+File:           buseinssLogic.py
 Version:        V2.1
 Date:           03.05.2018
-Function:       Obtain data from Chromosome15 DB, process and return output in JSON format.
+Function:       Process chromosome data and return output
 Copyright:                  Sarah Griffiths
 Author:                     Sarah Griffiths
 project_collaborators:      Archana Patil, Sergio Ramalli, Fabio Biond
@@ -28,74 +28,14 @@ Revision History:
 V1.0 24.03.2018     Original    BY: Sarah Griffiths
 V2.0 17.04.2018     Re-Work 	BY:Sarah Griffiths
 v2.1 03.05.2018	    Fixed a bug	BY: Sarah Griffiths
+v2.2 07.05.2018	    removed data access BY: SG
 """
-#***********************************************************
-#import libraries
-#from urllib import request
+
 import sys
 import re
-#import archanapymsql
 
-#************************************************************
-""" Classes and functions"""
-#could make this and the one below a class.
-#could store codons in seperate file and import module codons?
 
-class BasicDBExtraction(object):
-      """ Class containing all functions required to extract basic info from DB with no computations the returned values can then be used in calculation - you must call these function and classes first
-"""
-
-      def BasicInfo(gene_name):
-            """input = Gene_name
-                  Output = accession number, NCBI identifier,
-                  chromosome location, protein product name -
-                  dictionary containing these items
-				  17.04.2018 		By:SG
-            """
-                  
-            BasicInfoDictionary = Gene (gene_name)
-            
-            locals().update(BasicInfoDictionary)
-
-            return (accessionNumber)
-            return(NCBIIdentifier)
-            return (chromosomeLocation)
-            return (proteinProductName)
-
-      def SequenceExtraction(gene_name):
-            """input = Gene_name
-                  Output = CDS start position, CDS end
-                  position, gDNASequence and CDS -
-                  dictionary containing these items
-				  17.04.2018 		By:SG
-            """
-                  
-            SequenceDictionary = Sequence(gene_name)
-            
-            locals().update(SequenceDictionary)
-
-            
-
-            return (CDSStartposition)
-            return(CDSendposition)
-            return (gDNASequence)
-            return (CDS)
-
-      def RestrictionEnzyme(RE_name):
-            """input = RE_name
-                  Output = RE sequence
-				  17.04.2018 		By:SG
-            """
-                  
-            REDictionary = Restriction_enzyme(RE_name)
-            
-            locals().update(REDictionary)
-
-            
-      
-            return (REsequence)
-    
-                        
+        
 
 
 def ParseSequence(origin):
@@ -268,8 +208,8 @@ def codonFreq(nuc_sequence):
                 codonfrequency[codon] = 1
         for i in codons:
             if i not in codonfrequency:
-                freq[i] = 0
-    return (freq) 
+                codonfrequency[i] = 0
+    return (codonfrequency) 
 
 
 def totalCodonFreq(seq):
@@ -316,7 +256,8 @@ def restrictionEnzyme(shortSequence, cds_start, cds_end,sequence):
             sites[match] = (match.start(), match.end(), 'not in coding region')
 
     for i in sites:
-        print(i, sites[i])
+        # print(i, sites[i])
+        pass;
     return(sites)   
 
 
