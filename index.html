@@ -186,15 +186,7 @@
 
     };
 
-
-
     $(document).ready(function(event){
-
-        getLists("accessions");
-        // getLists(JAV_URL + "?get=list&type=genes", $(this));
-        // getLists(JAV_URL + "?get=list&type=enzymes", ());
-        // getLists(JAV_URL + "?get=list&type=protein-products");
-        // getLists(JAV_URL + "?get=list&type=locations");
 
         $('#form_test').submit(function(event){
 
@@ -230,32 +222,45 @@
             
         });
 
+        getLists("genes");
+        $('#search-label').html('Search Gene identifier');
+        searchItem = 'gene';
+
         $('#select-output').change(function(event){
 
             switch($(this).val()) {
 
                 case "gene-identifier":
+
+                    getLists("genes");
                     $('#search-label').html('Search Gene identifier');
                     searchItem = 'gene';
                     break;
 
                 case "product":
+
+                    getLists("protein-products");
                     $('#search-label').html('Search Protein Product');
                     searchItem = 'protein';
                     break;
 
                 case "genbank":
+
+                    getLists("accessions");
                     $('#search-label').html('Seach genBank entry');
-                    $('#search-input').val('U49845');
                     searchItem = 'genbank';
                     break;
 
                 case "location":
+
+                    getLists("locations");
                     $('#search-label').html('search between Chromosomal locations');
                     searchItem = 'location';
                     break;
 
-                case "location":
+                case "enzymes":
+
+                    getLists("enzymes");
                     $('#search-label').html('search between Chromosomal locations');
                     searchItem = 'restriction-enzyme';
                     break;
