@@ -141,14 +141,57 @@
     
     searchItem = 'gene';
     val = 'example';
-    url = "http://turingrepublic.com/api/json/"+ searchItem +"/" + val;
+    JAV_URL = 'http://localhost/json/output.py';
+
+    var getLists = function(url){
+
+        $.ajax({
+
+            url: url,
+            dataType: 'json',
+            success: function(result){
+
+                console.log(result);
+                alert('here');
+                if(result['result'] == true){
+                    return result['data'];
+                }else{
+                    return { 0 : 'Nothing returned'}
+                }
+            
+            }
+
+        }); 
+
+    };
+
+
+                // for (var key in result['data']) {
+
+                //     // skip loop if the property is from prototype
+                //     if (!result['data'].hasOwnProperty(key)) continue;
+                //     var obj = result['data'][key];
+
+                // }
+
     $(document).ready(function(event){
+
+        accessions = getLists(JAV_URL + "?get=list&type=accessions");
+
+        console.log(accessions);
+
+
+        genes = getLists(JAV_URL + "?get=list&type=genes");
+        enzymes = getLists(JAV_URL + "?get=list&type=enzymes");
+
+        protein_product = getLists(JAV_URL + "?get=list&type=protein-products");
+        locations = getLists(JAV_URL + "?get=list&type=locations");
 
         $('#form_test').submit(function(event){
 
             event.preventDefault();
             val = $('#search-input').val();
-            url = "http://turingrepublic.com/api/json/"+ searchItem +"/" + val;
+            url = JAV_URL + "json/"+ searchItem +"/" + val;
 
             // alert(url);
             
@@ -164,8 +207,6 @@
                 url: url,
                 dataType: 'json',
                 success: function(result){
-
-                    console.log(result);
 
                     if(!result['result']){
                         alert('no result found');
