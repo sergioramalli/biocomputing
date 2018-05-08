@@ -29,6 +29,7 @@ try:
 		if _GET['get'] == 'list':
 
 			message = _GET["type"] + ' list returned';
+			result = True;
 
 			if _GET['type'] == 'genes':
 
@@ -49,7 +50,6 @@ try:
 			else:
 
 				data = x.AccessChromLocList();
-				result = True;
 
 		else:
 
@@ -78,7 +78,6 @@ except Exception as e:
 
 	result = False;
 	message = e;
-	exit()
 
 data = {
 	'data' : data,
@@ -89,15 +88,3 @@ json_string = json.dumps(data)
 
 print(json_string)
 exit()
-
-# No returns 
-# print(x.ProductNameList())
-# print(x.AccessRestriction_enzymeList());
-
-
-##these are the functions to get a gene name 
-# print(x.AccessGeneData('TCF12'))
-# print(x.AccessSequenceSummary('put name here'))
-# print(x.AccessSequenceData('put name here'))
-# print(x.AccessRestriction_enzymeInfo('put name here'))
-

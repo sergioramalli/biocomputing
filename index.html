@@ -104,10 +104,16 @@
                 <br>
                 <div class="row clear"></div>
 
+
+                <datalist id="search-input-list">
+                </datalist>
+
                 <form id="form_test">
                     <div class="form-group">
+
                         <label for="search-input" id="search-label">Search Identifier</label>
-                        <input type="text" class="form-control" id="search-input" placeholder="">
+                        <input list="search-input-list" id="search-input" placeholder="search" class="form-control">
+
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
@@ -143,22 +149,37 @@
     val = 'example';
     JAV_URL = 'http://localhost/json/output.py';
 
-    var getLists = function(url){
+    var getLists = function(type){
+
+        url = JAV_URL + "?get=list&type=" + type
+
+        console.log(url);
+
+        list = $('#search-input-list');
+        input = $('#search-input');
+
+        list.empty();
 
         $.ajax({
 
             url: url,
             dataType: 'json',
             success: function(result){
-
-                console.log(result);
-                alert('here');
+ 
                 if(result['result'] == true){
-                    return result['data'];
-                }else{
-                    return { 0 : 'Nothing returned'}
-                }
-            
+
+                    for (var key in result['data']) {
+
+                        // skip loop if the property is from prototype
+                        if (!result['data'].hasOwnProperty(key)) continue;
+
+                        list.append($("<option />").val(result['data'][key]));
+                        input.attr("placeholder", "search " + type);
+                        
+                    }
+
+                } 
+
             }
 
         }); 
@@ -166,26 +187,14 @@
     };
 
 
-                // for (var key in result['data']) {
-
-                //     // skip loop if the property is from prototype
-                //     if (!result['data'].hasOwnProperty(key)) continue;
-                //     var obj = result['data'][key];
-
-                // }
 
     $(document).ready(function(event){
 
-        accessions = getLists(JAV_URL + "?get=list&type=accessions");
-
-        console.log(accessions);
-
-
-        genes = getLists(JAV_URL + "?get=list&type=genes");
-        enzymes = getLists(JAV_URL + "?get=list&type=enzymes");
-
-        protein_product = getLists(JAV_URL + "?get=list&type=protein-products");
-        locations = getLists(JAV_URL + "?get=list&type=locations");
+        getLists("accessions");
+        // getLists(JAV_URL + "?get=list&type=genes", $(this));
+        // getLists(JAV_URL + "?get=list&type=enzymes", ());
+        // getLists(JAV_URL + "?get=list&type=protein-products");
+        // getLists(JAV_URL + "?get=list&type=locations");
 
         $('#form_test').submit(function(event){
 
