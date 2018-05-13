@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Portfolio Item - Start Bootstrap Template</title>
+    <title>Biocomputing Coursework</title>
 
     <!-- Bootstrap core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -43,7 +43,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="http://turingrepublic.com/api/array/genbank/U49845">API</a>
+                        <a class="nav-link" href="json/output.py/?get=list&type=locations">API/CGI Output</a>
                     </li>
                 </ul>
             </div>
@@ -111,8 +111,21 @@
                 <form id="form_test">
                     <div class="form-group">
 
-                        <label for="search-input" id="search-label">Search Identifier</label>
+                        <label for="search-input" id="search-label">Text Search <span class="type-label"></span></label>
                         <input list="search-input-list" id="search-input" placeholder="search" class="form-control">
+
+                        <br>
+                        
+                        <div class="form-group">
+                            <label for="search-input" id="search-label">Select via drop box <span class="type-label"></span></label>
+                            <select class="custom-select">
+                                <option value="gene-identifier">Gene Identifier</option>
+                                <option value="product">Protein Product</option>
+                                <option value="genbank">GenBank Accession</option>
+                                <option value="location">Chromosomal Location</option>
+                                <option value="restriction-enzyme">Restriction Enzyme</option>
+                            </select>
+                        </div>
 
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
@@ -145,6 +158,7 @@
 
 <script type="text/javascript">
     
+
     searchItem = 'gene';
     val = 'example';
     JAV_URL = 'http://localhost/json/output.py';
@@ -152,8 +166,6 @@
     var getLists = function(type){
 
         url = JAV_URL + "?get=list&type=" + type
-
-        console.log(url);
 
         list = $('#search-input-list');
         input = $('#search-input');
@@ -193,6 +205,8 @@
             event.preventDefault();
             val = $('#search-input').val();
             url = JAV_URL + "json/"+ searchItem +"/" + val;
+
+            console.log(url);
 
             // alert(url);
             
@@ -272,7 +286,6 @@
 
             url = "http://turingrepublic.com/api/json/"+ searchItem +"/" + val;
             $('#data_img').html(url);
-
 
         });
 

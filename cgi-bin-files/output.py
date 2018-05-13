@@ -4,18 +4,19 @@
 import cgi,cgitb, os
 import json
 from lib import businessLogic as BL
-from lib import db_access 
+from lib import archana 
 from home import getUrl
 
 print("Content-Type: application/json")  
-print()          
-print()                   
+print()                            
 cgitb.enable() #for debugging
+
+debug = False;
 
 try:
 
 	x = db_access.RetriveData()
-	_GET = getUrl();
+	_GET = getUrl(debug);
 	result = False;
 	message = '';
 	data = {};
@@ -69,8 +70,25 @@ try:
 			# codonFrequency = BL.codonFreq(splitSequence)# need to edit to incorporate total frequencies
 			# restrictionEnzymeCutSites = BL.restrictionEnzyme('ttgtc', start, end, parsedSequence) #returned as dictionary
 
+			x = getAllGenes();
+
+			xx = getAllEntryData(x[0], 'gene');
+			# print(xx);
+
+			xx = getAllEntryData('cartilage intermediate layer protein', 'protein_product_name');
+			# print(xx);
+
+			xx = getAllEntryData('15q22', 'chromosome_location');
+			# print(xx);
+
+			xx = getAllEntryData('AB022430', 'accession');
+			print(xx)
+
 			if _GET['type'] == 'accessions':
 				print('get single');
+
+			else:
+				print('here');
 
 		pass
 
