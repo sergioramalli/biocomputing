@@ -215,7 +215,7 @@ class RetriveData(object):
 		ProteinProductName_list = []
 
 		# Create SQL statement to find list of the gene from Table Gene
-		sql = "SELECT product_name From   Protein"
+		sql = "SELECT product_name From Protein"
 
 		db = DatabaseAccess();
 		result = db.Script_Execute(sql);
@@ -318,7 +318,7 @@ class RetriveData(object):
 
 	
 
-	def AccessSequenceSummary (self, SummarySeqData):
+	def AccessSequenceSummary (self):
 			
 		"""
 
@@ -366,7 +366,6 @@ class RetriveData(object):
 	   
 		# Create SQL statement to find a RE_name and cut_site from Table Restrition Enzyme
 		sql = "select RE_name, cut_site From   Restriction_enzymes Where upper(RE_name) LIKE upper('%"+ name +"%');"
-		print(sql)
 		db = DatabaseAccess()
 		result = db.Script_Execute(sql)
 		return result #returning result as dictionary
@@ -387,23 +386,23 @@ class RetriveData(object):
 
 
 
-x = RetriveData()
+# x = RetriveData()
 
-# These are the functions to provide the lists
-print(x.AcessGeneList())
-print(x.AccessRestriction_Enz_List());
-print(x.ProductNameList())
-print(x.AccessChromLocList())
-print(x.ProductNameList())
-print(x.AccessSequenceSummary())
+# # These are the functions to provide the lists
+# print(x.AcessGeneList())
+# print(x.AccessRestriction_Enz_List());
+# print(x.ProductNameList())
+# print(x.AccessChromLocList())
+# print(x.ProductNameList())
+# print(x.AccessSequenceSummary())
 
 
-#these are the functions to get a gene name, chromosome loc, accession number, protein product name, Sequence data and Restriction enzyme and cutsite 
-print(x.AccessGeneData('put the gene name here'))
-print(x.AccessAccession_number('put the accession number here'))
-print(x.AccessChromosome_loc('put chromosome loc here'))
-print(x.AccessProduct_name('put product name here'))
-print(x.AccessSeqData_AccNo('put accession number here'))
-print(x.AccessSeqData_Gene('put gene name here'))
-print(x.AccessRestriction_Enz_Info('put the RE name here'))
+# #these are the functions to get a gene name, chromosome loc, accession number, protein product name, Sequence data and Restriction enzyme and cutsite 
+# print(x.AccessGeneData('put the gene name here'))
+# print(x.AccessAccession_number('put the accession number here'))
+# print(x.AccessChromosome_loc('put chromosome loc here'))
+# print(x.AccessProduct_name('put product name here'))
+# print(x.AccessSeqData_AccNo('put accession number here'))
+# print(x.AccessSeqData_Gene('put gene name here'))
+# print(x.AccessRestriction_Enz_Info('put the RE name here'))
 
