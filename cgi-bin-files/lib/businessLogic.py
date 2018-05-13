@@ -299,7 +299,7 @@ def totalCodonFreq(seq):
     return (total_freq)
 
 
-def restrictionEnzyme(shortSequence, cds_start, cds_end,sequence):
+def restrictionEnzyme(shortSequence, cds_start, cds_end, sequence):
     """ Identifies restriction enzyme cut sites by looking for palindromes in sequence and signals if they are inside or outside coding regions
     Input: sequence --- restriction enzyme site selected from DB list or input yourself
            cds_start --- start of CDS which can be retrieved from DB @SG will need to retrieve these with pymysql once back end complete - for now just use dummys

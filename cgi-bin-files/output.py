@@ -6,8 +6,8 @@ import json
 import urllib.parse
 import sys
 from lib import archana as DB
-from lib import businessLogicMainFile as BL
-from lib import businessLogic
+from lib import businessLogicMainFile as BLM
+from lib import businessLogic as BL
 
 from home import getUrl
 
@@ -16,7 +16,7 @@ print()
 print()               
 cgitb.enable() #for debugging
 
-debug = True;
+debug = False;
 
 try:
 
@@ -25,7 +25,7 @@ try:
 	data = {};
 	_GET = getUrl(debug);
 	database = DB.RetriveData();
-	BLObject = BL.middleLayerApi(database);
+	BLObject = BLM.middleLayerApi(database, BL);
 
 	if 'get' not in _GET:
 
@@ -46,36 +46,55 @@ try:
 
 				data = database.AccessionNumberList();
 
-			elif _GET['type'] == 'protein-product':
+			elif _GET['type'] == 'protein-products':
 
 				data = database.ProductNameList();
 
-			elif _GET['type'] == 'enzymes':
+			elif _GET['type'] == 'restriction-enzymes':
 
-				data = database.AccessRestriction_enzymeList();
+				data = database.AccessRestriction_Enz_List();
 
-			else:
+			elif _GET['type'] == 'location':
 
-				data = x.AccessChromLocList();
+				data = database.AccessChromLocList();
+
+			else: 
+
+				result = False;
 
 		else:
 
+			if 'term' not in _GET:
+
+				raise ValueError('please provide a search term');
+
+			result = True;
+			term = urllib.parse.unquote(_GET['term'])
+
 			if _GET['type'] == 'gene':
 
-				data = BLObject.getAllEntryData(_GET['term'], 'gene');	
+				data = BLObject.getAllEntryData(term, 'gene');	
 
 			elif _GET['type'] == 'accession':
 
-				data = BLObject.getAllEntryData(_GET['term'], 'accession');	
+				data = BLObject.getAllEntryData(term, 'accession');	
 
 			elif _GET['type'] == 'protein-product':
 
-				term = urllib.parse.unquote(_GET['term'])
 				data = BLObject.getAllEntryData(term, 'protein_product_name');	
 			
-			else:
+			elif _GET['type'] == 'location':
 
-				data = BLObject.getAllEntryData(_GET['term'], 'chromosome_location');
+				data = BLObject.getAllEntryData(term, 'chromosome_location');
+
+			elif _GET['type'] == 'cut-site':
+
+				sequence = 'tcgaatcgaatcgaatcgaatcgaactgccgctttdgtttcccaaaaaaaggcgctagcggatcggctagagctcttttcgcggctc'
+				data = BLObject.restrictionEnzymeCutSites(sequence, 'EaeI', 1, 20);
+
+			else: 
+
+				result = False
 
 		pass
 
@@ -93,18 +112,3 @@ json_string = json.dumps(data)
 
 print(json_string)
 exit()
-
-
-x = getAllGenes();
-
-xx = getAllEntryData(x[0], 'gene');
-# print(xx);
-
-xx = getAllEntryData('cartilage intermediate layer protein', 'protein_product_name');
-# print(xx);
-
-xx = getAllEntryData('15q22', 'chromosome_location');
-# print(xx);
-
-xx = getAllEntryData('AB022430', 'accession');
-# print(xx)

@@ -33,8 +33,9 @@ v3.1 08.05.2018     final edits BY: SG
 """
 class middleLayerApi(object):
 
-    def __init__(self, DB):
+    def __init__(self, DB, BL):
         self.accessLayer = DB;
+        self.BL = BL
 
     def getAllGenes(self):
 
@@ -192,13 +193,14 @@ class middleLayerApi(object):
 
 
         
-    def restrictionEnzymeCutSites(self, bases):
+    def restrictionEnzymeCutSites(self, bases, name, start, end):
 
         """ input: bases of cut site eg. tcgaa
             return: dictionary of sequence start and end sites and indication of whether or not in coding region """
-        dictionary = self.accessLayer.AccessRestriction_enzymeInfo(name)
+        dictionary = self.accessLayer.AccessRestriction_Enz_Info(name)
         locals().update(dictionary)
-        cutSite = cut_site
-        cutSiteLocations = BL.restrictionEnzyme(cut_site, start, end, parsedSequence) 
+
+        cutSite = dictionary[0]['cut_site'];
+        cutSiteLocations = self.BL.restrictionEnzyme(cutSite, start, end, bases) 
         return (cutSiteLocations) #returned as dictionary
 

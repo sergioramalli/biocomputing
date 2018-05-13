@@ -242,6 +242,7 @@
 
         $('#select-output').change(function(event){
 
+            alert($(this).val());
             switch($(this).val()) {
 
                 case "gene-identifier":
@@ -272,9 +273,9 @@
                     searchItem = 'location';
                     break;
 
-                case "enzymes":
+                case "restriction-enzyme":
 
-                    getLists("enzymes");
+                    getLists("restriction-enzymes");
                     $('#search-label').html('search between Chromosomal locations');
                     searchItem = 'restriction-enzyme';
                     break;
