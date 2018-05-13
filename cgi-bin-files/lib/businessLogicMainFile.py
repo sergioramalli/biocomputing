@@ -95,6 +95,7 @@ class middleLayerApi(object):
             sequenceInfo = self.accessLayer.AccessSeqData_AccNo(key)[0]
             returnObject[0] = {
                 'sequenceInfo' : self.retrieveSequenceAnalysis(sequenceInfo),
+                # 'sequenceInfo' : sequenceInfo,
                 'basicInfo' : basicInfo[0]
             };
 
