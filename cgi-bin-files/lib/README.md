@@ -1,9 +1,9 @@
 # Chromosome_15 - Middle Layer - Sarah Griffiths
 
 
-To run save all of these files in 1 folder.
+<b><u>To run with dummy code save all of these files in 1 folder.</b></u>
 
-business_layer.py,
+businessLogic.py,
 dummyDataOutput.py,
 seq.txt
 
@@ -14,5 +14,14 @@ run.
 This will return variables with required names - 
 To test this you can print the variables. 
 
-Do not use - businessLogicMainFile.py until data has been entered.
+<b><u>To run with Data layer</b></u>
+
+save these files in 1 folder with DB access layers
+
+businessLogic.py
+businessLogicMainFile.py
+
+See user guide for functions
+
+
 Do not use - test.py - these are for testing database data.
