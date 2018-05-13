@@ -22,6 +22,19 @@
             overflow: hidden;
         }
 
+        .select-gene-td{
+            color:blue;
+            cursor: pointer; 
+        }
+
+        #result-output{
+            word-wrap: break-word;
+        }
+
+        .tdSequence{
+            word-wrap: break-word;
+        }
+
     </style>
 
 </head>
@@ -61,15 +74,77 @@
         <!-- Portfolio Item Row -->
         <div class="row">
 
-            <div class="col-md-6">
+            <div class="col-sm-8" id="result-output" >
 
-                <div id="data_json" class="col-md-11">
-                    <img class="img-fluid" id="img_dna" src="https://psmag.com/.image/t_share/MTI3NTgxOTUzNTk4NzIzMzQ2/gene-expression.jpg" alt="">
+                <h3 class="my-3">Results will output here</h3>
+
+                <div id="results">
+
+                    <br>
+                    <h5>Accession:
+                        <small>
+                            <span id="result-accession">
+                            </span>
+                        </small>
+                     </h5>
+
+                    <h5>Chromosomal Location:
+                        <small>
+                            <span id="result-chromosome_loc">
+                            </span>
+                        </small>
+                    </h5>
+
+                    <h5>Gene Name:
+                        <small>
+                            <span id="result-gene_name">
+                            </span>
+                        </small>
+                    </h5>
+
+                    <h5>Product Name:
+                        <small>
+                            <span id="result-product-name"></span>
+                        </small>
+                    </h5>
+
                 </div>
+
+                <hr>
+
+                <div>
+
+                    <p>Coding Region<br>
+                        <small><span id="result-codingRegion"></span></small>
+                    </p>
+
+                    <p>mRna Sequence<br>
+                        <small><span id="result-mRnaSequence"></span></small>
+                    </p>
+
+                    <p>Split Sequence<br>
+                        <small><span id="result-splitSequence"></span></small>
+                    </p>
+
+                    <p>Translated And Aligned<br>
+                        <small><span id="result-translatedAndAligned"></span></small>
+                    </p>
+
+                    <p>Just Amino Acids<br>
+                        <small><span id="result-justAminoAcids"></span></small>
+                    </p>
+
+                    <p>Codon Frequency<br>
+                        <small><span id="result-codonFrequency"></span></small>
+                    </p>
+
+                </div>
+
 
             </div>
 
-            <div class="col-md-6">
+            <div class="col-sm-4">
+
                 <h3 class="my-3">Project Description</h3>
                 <p id="response_object">A quick demo of a restful api, with the api you would be able to search these elements</p>
                 <ul>
@@ -102,11 +177,11 @@
                 <br>
                 <div class="row clear"></div>
 
-
                 <datalist id="search-input-list">
                 </datalist>
 
                 <form id="form_test">
+
                     <div class="form-group">
 
                         <label for="search-input" id="search-label">Text Search <span class="type-label"></span></label>
@@ -115,18 +190,25 @@
                         <br>
                         
                         <div class="form-group">
-                            <label for="search-input" id="search-label">Select via drop box <span class="type-label"></span></label>
+                            <label for="search-input" id="search-label">Or Select via drop box <span class="type-label"></span></label>
                             <select class="custom-select" id="search-input-option">
-                                <option value="gene-identifier">Gene Identifier</option>
-                                <option value="product">Protein Product</option>
-                                <option value="genbank">GenBank Accession</option>
-                                <option value="location">Chromosomal Location</option>
                             </select>
                         </div>
 
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+
                 </form>
+
+            </div>
+
+            <div class="col-sm-12">
+                
+                <h3 class="my-3">Select Gene</h3>
+
+                <div id="data_json">
+                    <img class="img-fluid" id="img_dna" src="https://psmag.com/.image/t_share/MTI3NTgxOTUzNTk4NzIzMzQ2/gene-expression.jpg" alt="">
+                </div>
+
             </div>
 
         </div>
@@ -154,7 +236,6 @@
 </html>
 
 <script type="text/javascript">
-    
 
     searchItem = 'gene';
     val = 'example';
@@ -200,7 +281,124 @@
 
     };
 
+    $.ajax({
+
+        url: JAV_URL + "?get=list&type=sequences",
+        dataType: 'json',
+        success: function(result){
+
+            html = '<table class="table table-bordered">' +
+                        '<thead>' +
+                            '<tr>' +
+                                '<th width="10%">Accession</th><th width="10%">Gene</th><th width="10%">Location</th><th width="70%">gDNA</th>'+
+                            '</tr>' +
+                        '</thead><tbody>';
+
+            if(result['result'] == true){
+
+                for (var key in result['data']) {
+
+                    // skip loop if the property is from prototype
+                    if (!result['data'].hasOwnProperty(key)) continue;
+                    
+                    html = html +'<tr><td><a href="" data-id="'+result['data'][key]['accession_number']+'" class="select-gene-td">'+result['data'][key]['accession_number']+'</a></td>' +
+                    '<td>'+result['data'][key]['gene_name']+'</td><td>' + result['data'][key]['chromosome_loc'] + '</td>'+ 
+                    '<td>'+result['data'][key]['gDNA'].substr(0, 35) +'...</td></tr>';
+
+                }
+
+                html = html + '</tbody></table>';
+                $('#data_json').html(html);
+
+            } 
+
+        }
+
+    }); 
+
+    var renderBasicHtml = function(info){
+
+        $('#result-accession').html(info['accession_number']);
+        $('#result-chromosome_loc').html(info['chromosome_loc']);
+        $('#result-gene_name').html(info['gene_name']);
+        $('#result-product-name').html(info['product_name']);
+
+    } 
+
+    var renderSequenceHtml = function(info){
+        
+        $('#result-codingRegion').html( info['codingRegion'] );
+        $('#result-mRnaSequence').html(info['mRnaSequence']);
+        $('#result-splitSequence').html(info['splitSequence']);
+        $('#result-translatedAndAligned').html(info['translatedAndAligned']);
+        $('#result-justAminoAcids').html(info['justAminoAcids']);
+        $('#result-codonFrequency').html(info['codonFrequency']);
+
+    }
+
+    url = JAV_URL + '?get=single&type=accession&term=JN245882';
+
+    $.ajax({
+
+        url: url,
+        dataType: 'json',
+        success: function(result){
+
+            if(result['result'] == true){
+
+                $("html, body").animate({ scrollTop: 0 }, "slow");
+                renderBasicHtml(result['data'][0]['basicInfo']);
+                renderSequenceHtml(result['data'][0]['sequenceInfo']);
+
+            }else{
+
+                alert(result['message']);
+
+            }
+
+        }
+
+    });  
+
     $(document).ready(function(event){
+
+        $(document).on("click", '.select-gene-td', function(event){
+            
+            event.preventDefault();
+            accession = $(this).attr('data-id');
+            url = JAV_URL + '?get=single&type=accession&term=' + accession;
+
+            $.ajax({
+
+                url: url,
+                dataType: 'json',
+                success: function(result){
+
+                    if(result['result'] == true){
+
+                        if(result['data'][0]['sequenceInfo']['error'] != false){
+
+                            alert('There was an error retrieving this item: please try another ');
+
+                        }else{
+
+                            $("html, body").animate({ scrollTop: 0 }, "slow");
+                            
+                        }
+                        renderBasicHtml(result['data'][0]['basicInfo']);
+                        renderSequenceHtml(result['data'][0]['sequenceInfo']);
+
+                    }else{
+
+                        alert(result['message']);
+
+                    }
+
+                }
+
+            });  
+
+        });
 
         $('#form_test').submit(function(event){
 
