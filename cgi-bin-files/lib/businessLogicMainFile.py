@@ -31,175 +31,174 @@ v2.0 28.04.2018     Original    BY: SG
 v3.0 07.05.2018     Include data access layers BY:SG
 v3.1 08.05.2018     final edits BY: SG
 """
+class middleLayerApi(object):
 
-import archana as DB
-import businessLogic as BL
+    def __init__(self, DB):
+        self.accessLayer = DB;
 
-accessLayer = DB.RetriveData();
+    def getAllGenes(self):
 
-def getAllGenes():
+        """ accesses DB and returns list of all genes A-Z """
+        geneList = self.accessLayer.AcessGeneList()
+        return(geneList)
 
-    """ accesses DB and returns list of all genes A-Z """
-    geneList = accessLayer.AcessGeneList()
-    return(geneList)
+    def getAllProteins(self):
 
-def getAllProteins():
+        proteinList =self.accessLayer.ProductNameList()
+        return (proteinList)
 
-    proteinList =accessLayer.ProductNameList()
-    return (proteinList)
+    def getAllAccessions(self):
 
-def getAllAccessions():
+        accessionsList =self.accessLayer.AccessionNumberList()
+        return (accessionList)
 
-    accessionsList =accessLayer.AccessionNumberList()
-    return (accessionList)
+    def getAllChromosomeLocations(self):
 
-def getAllChromosomeLocations():
+        chromosomeLocationList= self.accessLayer.AccessChromLocList()
+        return (chromosomeLocationList)
 
-    chromosomeLocationList= accessLayer.AccessChromLocList()
-    return (chromosomeLocationList)
+    def getAllEntryData(self, key, searchType): 
 
-def getAllEntryData(key, searchType): 
+        """ returns all data for a particular record
+        input: key --- genename/accession/protein name/chromsome location
+        output accession_number, NCBI_identifier, chromosome_location, protein_product_name
+               parsedSequence, codingRegion, mrnaSequence, splitSequence, translatedAndAligned,
+               justAminoAcids, codonFrequency, RestrictionEnzymes
+               --- see user guide for description of each """
+        # access gene DB layer via accession number only and return variables
 
-    """ returns all data for a particular record
-    input: key --- genename/accession/protein name/chromsome location
-    output accession_number, NCBI_identifier, chromosome_location, protein_product_name
-           parsedSequence, codingRegion, mrnaSequence, splitSequence, translatedAndAligned,
-           justAminoAcids, codonFrequency, RestrictionEnzymes
-           --- see user guide for description of each """
-    # access gene DB layer via accession number only and return variables
+        returnObject = {};
 
-    returnObject = {};
+        if searchType == 'gene': 
 
-    if searchType == 'gene': 
+            basicInfo = self.accessLayer.AccessGeneData(key);
 
-        basicInfo = accessLayer.AccessGeneData(key);
+            xx = 0;
+            for x in basicInfo:
 
-        xx = 0;
-        for x in basicInfo:
+                sequenceInfo = self.accessLayer.AccessSeqData_AccNo(x['accession_number'])[0]
+                returnObject[xx] = {
+                    # 'sequenceInfo' :retrieveSequenceAnalysis(sequenceInfo),
+                    'basicInfo' : basicInfo[0]
+                };
+                xx += 1;
 
-            sequenceInfo = accessLayer.AccessSeqData_AccNo(x['accession_number'])[0]
-            returnObject[xx] = {
+                pass
+
+            pass;
+            
+        elif searchType == 'accession':
+
+            basicInfo = self.accessLayer.AccessAccession_number(key);
+
+            sequenceInfo = self.accessLayer.AccessSeqData_AccNo(key)[0]
+            returnObject[0] = {
                 # 'sequenceInfo' :retrieveSequenceAnalysis(sequenceInfo),
                 'basicInfo' : basicInfo[0]
             };
-            xx += 1;
 
-            pass
+        elif searchType == 'protein_product_name':
 
-        pass;
+            basicInfo = self.accessLayer.AccessProduct_name(key);
+
+            xx = 0;
+            for x in basicInfo:
+
+                sequenceInfo = self.accessLayer.AccessSeqData_AccNo(x['accession_number'])[0]
+                returnObject[xx] = {
+                    # 'sequenceInfo' :retrieveSequenceAnalysis(sequenceInfo),
+                    'basicInfo' : basicInfo[0]
+                };
+                xx += 1;
+
+                pass
+
+            pass; 
+
+        elif searchType == 'chromosome_location':
+
+            basicInfo = self.accessLayer.AccessChromosome_loc(key);
+
+            xx = 0;
+            for x in basicInfo:
+
+                sequenceInfo = self.accessLayer.AccessSeqData_AccNo(x['accession_number'])[0]
+                returnObject[xx] = {
+                    # 'sequenceInfo' :retrieveSequenceAnalysis(sequenceInfo),
+                    'basicInfo' : basicInfo[0]
+                };
+                xx += 1;
+
+                pass
+
+            pass; 
+
+        return returnObject;
+
+
+    def retrieveSequenceAnalysis(self, sequenceInfo):
+        """ The functions access all of analysis from sarah's BL file import and return all analysis of the file
+        input: Sequence 
+        output parsedSequence, codingRegion, mrnaSequence, splitSequence, translatedAndAligned,
+               justAminoAcids, codonFrequency
+               --- see user guide for description of each """
+
+        try:
+
+            CDSjoin = sequenceInfo['CDS_join'];
+            codingRegion = BL.cdsJoin(CDSjoin)
+
+            if not codingRegion[0].isnumeric():
+                print(codingRegion);
+                raise ValueError('couldnt find coding region of gene');
+
+            if not codingRegion[1].isnumeric():
+                raise ValueError('couldnt find coding region of gene');
+
+
+            start = int(codingRegion[0])
+            end = int(codingRegion[1])
+            parsedSequence = sequenceInfo['gDNA']
+
+            #processing data with functions created in businessLogic.py - all of them contain 'return' statements so none required here.
+            codingRegion = BL.codingRegion(start,end,parsedSequence)
+            mrnaSequence = BL.translate(codingRegion)
+            splitSequence = BL.CodonSequence(mrnaSequence)
+            translatedAndAligned = BL.alignseq(splitSequence)
+            justAminoAcids = BL.translatedSequence(splitSequence)#check this
+            codonFrequency = BL.codonFreq(splitSequence)# need to edit to incorporate total frequencies
+
+            return({
+                'error' : False,
+                'codingRegion' : codingRegion, 
+                'mRnaSequence' : mrnaSequence, 
+                'splitSequence' : splitSequence, 
+                'translatedAndAligned' : translatedAndAligned, 
+                'justAminoAcids' : justAminoAcids,
+                'codonFrequency' : codonFrequency,
+            });
+
+        except Exception as e:
+
+            return({
+                'error' : e,
+                'codingRegion' : '', 
+                'mRnaSequence' : '', 
+                'splitSequence' : '', 
+                'translatedAndAligned' : '', 
+                'justAminoAcids' : '',
+                'codonFrequency' : '',
+            });
+
+
         
-    elif searchType == 'accession':
+    def restrictionEnzymeCutSites(self, bases):
 
-        basicInfo = accessLayer.AccessAccession_number(key);
-
-        sequenceInfo = accessLayer.AccessSeqData_AccNo(key)[0]
-        returnObject[0] = {
-            # 'sequenceInfo' :retrieveSequenceAnalysis(sequenceInfo),
-            'basicInfo' : basicInfo[0]
-        };
-
-    elif searchType == 'protein_product_name':
-
-        basicInfo = accessLayer.AccessProduct_name(key);
-
-        xx = 0;
-        for x in basicInfo:
-
-            sequenceInfo = accessLayer.AccessSeqData_AccNo(x['accession_number'])[0]
-            returnObject[xx] = {
-                # 'sequenceInfo' :retrieveSequenceAnalysis(sequenceInfo),
-                'basicInfo' : basicInfo[0]
-            };
-            xx += 1;
-
-            pass
-
-        pass; 
-
-    elif searchType == 'chromosome_location':
-
-        basicInfo = accessLayer.AccessChromosome_loc(key);
-
-        xx = 0;
-        for x in basicInfo:
-
-            sequenceInfo = accessLayer.AccessSeqData_AccNo(x['accession_number'])[0]
-            returnObject[xx] = {
-                # 'sequenceInfo' :retrieveSequenceAnalysis(sequenceInfo),
-                'basicInfo' : basicInfo[0]
-            };
-            xx += 1;
-
-            pass
-
-        pass; 
-
-    return returnObject;
-
-
-def retrieveSequenceAnalysis(sequenceInfo):
-    """ The functions access all of analysis from sarah's BL file import and return all analysis of the file
-    input: Sequence 
-    output parsedSequence, codingRegion, mrnaSequence, splitSequence, translatedAndAligned,
-           justAminoAcids, codonFrequency
-           --- see user guide for description of each """
-
-    try:
-
-        CDSjoin = sequenceInfo['CDS_join'];
-        codingRegion = BL.cdsJoin(CDSjoin)
-
-        if not codingRegion[0].isnumeric():
-            print(codingRegion);
-            raise ValueError('couldnt find coding region of gene');
-
-        if not codingRegion[1].isnumeric():
-            raise ValueError('couldnt find coding region of gene');
-
-
-        start = int(codingRegion[0])
-        end = int(codingRegion[1])
-        parsedSequence = sequenceInfo['gDNA']
-
-        #processing data with functions created in businessLogic.py - all of them contain 'return' statements so none required here.
-        codingRegion = BL.codingRegion(start,end,parsedSequence)
-        mrnaSequence = BL.translate(codingRegion)
-        splitSequence = BL.CodonSequence(mrnaSequence)
-        translatedAndAligned = BL.alignseq(splitSequence)
-        justAminoAcids = BL.translatedSequence(splitSequence)#check this
-        codonFrequency = BL.codonFreq(splitSequence)# need to edit to incorporate total frequencies
-
-        return({
-            'error' : False,
-            'codingRegion' : codingRegion, 
-            'mRnaSequence' : mrnaSequence, 
-            'splitSequence' : splitSequence, 
-            'translatedAndAligned' : translatedAndAligned, 
-            'justAminoAcids' : justAminoAcids,
-            'codonFrequency' : codonFrequency,
-        });
-
-    except Exception as e:
-
-        return({
-            'error' : e,
-            'codingRegion' : '', 
-            'mRnaSequence' : '', 
-            'splitSequence' : '', 
-            'translatedAndAligned' : '', 
-            'justAminoAcids' : '',
-            'codonFrequency' : '',
-        });
-
-
-    
-def restrictionEnzymeCutSites(bases):
-
-    """ input: bases of cut site eg. tcgaa
-        return: dictionary of sequence start and end sites and indication of whether or not in coding region """
-    dictionary = accessLayer.AccessRestriction_enzymeInfo(name)
-    locals().update(dictionary)
-    cutSite = cut_site
-    cutSiteLocations = BL.restrictionEnzyme(cut_site, start, end, parsedSequence) 
-    return (cutSiteLocations) #returned as dictionary
+        """ input: bases of cut site eg. tcgaa
+            return: dictionary of sequence start and end sites and indication of whether or not in coding region """
+        dictionary = self.accessLayer.AccessRestriction_enzymeInfo(name)
+        locals().update(dictionary)
+        cutSite = cut_site
+        cutSiteLocations = BL.restrictionEnzyme(cut_site, start, end, parsedSequence) 
+        return (cutSiteLocations) #returned as dictionary
 
