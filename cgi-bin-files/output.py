@@ -3,23 +3,29 @@
 
 import cgi,cgitb, os
 import json
-from lib import businessLogic as BL
-from lib import archana 
+import urllib.parse
+import sys
+from lib import archana as DB
+from lib import businessLogicMainFile as BL
+from lib import businessLogic
+
 from home import getUrl
 
 print("Content-Type: application/json")  
-print()                            
+print()             
+print()               
 cgitb.enable() #for debugging
 
-debug = False;
+debug = True;
 
 try:
 
-	x = db_access.RetriveData()
-	_GET = getUrl(debug);
 	result = False;
 	message = '';
 	data = {};
+	_GET = getUrl(debug);
+	database = DB.RetriveData();
+	BLObject = BL.middleLayerApi(database);
 
 	if 'get' not in _GET:
 
@@ -34,19 +40,19 @@ try:
 
 			if _GET['type'] == 'genes':
 
-				data = x.AcessGeneList();	
+				data = database.AcessGeneList();	
 
 			elif _GET['type'] == 'accessions':
 
-				data = x.AccessionNumberList();
+				data = database.AccessionNumberList();
 
 			elif _GET['type'] == 'protein-product':
 
-				data = x.ProductNameList();
+				data = database.ProductNameList();
 
 			elif _GET['type'] == 'enzymes':
 
-				data = x.AccessRestriction_enzymeList();
+				data = database.AccessRestriction_enzymeList();
 
 			else:
 
@@ -54,48 +60,29 @@ try:
 
 		else:
 
-			#dummy data
-			with open ('lib/seq.txt','r') as f:
-			    sequence = f.read().split()
+			if _GET['type'] == 'gene':
 
-			# start = 3360
-			# end = 4300
+				data = BLObject.getAllEntryData(_GET['term'], 'gene');	
 
-			# parsedSequence = BL.ParseSequence(sequence)
-			# codingRegion = BL.codingRegion(start,end,parsedSequence)
-			# mrnaSequence = BL.translate(codingRegion)
-			# splitSequence = BL.CodonSequence(mrnaSequence)
-			# translatedAndAligned = BL.alignseq(splitSequence)
-			# justAminoAcids = BL.translatedSequence(splitSequence)#check this
-			# codonFrequency = BL.codonFreq(splitSequence)# need to edit to incorporate total frequencies
-			# restrictionEnzymeCutSites = BL.restrictionEnzyme('ttgtc', start, end, parsedSequence) #returned as dictionary
+			elif _GET['type'] == 'accession':
 
-			x = getAllGenes();
+				data = BLObject.getAllEntryData(_GET['term'], 'accession');	
 
-			xx = getAllEntryData(x[0], 'gene');
-			# print(xx);
+			elif _GET['type'] == 'protein-product':
 
-			xx = getAllEntryData('cartilage intermediate layer protein', 'protein_product_name');
-			# print(xx);
-
-			xx = getAllEntryData('15q22', 'chromosome_location');
-			# print(xx);
-
-			xx = getAllEntryData('AB022430', 'accession');
-			print(xx)
-
-			if _GET['type'] == 'accessions':
-				print('get single');
-
+				term = urllib.parse.unquote(_GET['term'])
+				data = BLObject.getAllEntryData(term, 'protein_product_name');	
+			
 			else:
-				print('here');
+
+				data = BLObject.getAllEntryData(_GET['term'], 'chromosome_location');
 
 		pass
 
 except Exception as e:
 
 	result = False;
-	message = e;
+	message = str(e);
 
 data = {
 	'data' : data,
@@ -106,3 +93,18 @@ json_string = json.dumps(data)
 
 print(json_string)
 exit()
+
+
+x = getAllGenes();
+
+xx = getAllEntryData(x[0], 'gene');
+# print(xx);
+
+xx = getAllEntryData('cartilage intermediate layer protein', 'protein_product_name');
+# print(xx);
+
+xx = getAllEntryData('15q22', 'chromosome_location');
+# print(xx);
+
+xx = getAllEntryData('AB022430', 'accession');
+# print(xx)
