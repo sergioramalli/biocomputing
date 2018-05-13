@@ -16,7 +16,7 @@ print()
 print()               
 # cgitb.enable() #for debugging
 
-debug = True;
+debug = False;
 
 try:
 
@@ -54,7 +54,7 @@ try:
 
 				data = database.AccessRestriction_Enz_List();
 
-			elif _GET['type'] == 'location':
+			elif _GET['type'] == 'locations':
 
 				data = database.AccessChromLocList();
 
