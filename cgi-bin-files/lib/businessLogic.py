@@ -326,10 +326,13 @@ def cdsJoin(join):
       Output: start and end variables
       """
       
-      p = re.compile(r'<(\d+).+>(\d+)')
+      p = re.compile(r'\((.*?)\)')
       match = p.search(join)
 
-      start = match.group(1)
-      end = match.group(2)
+      join = match.group(1);
+      join = join.split(",");
+
+      start = join[0].split("..")[0];
+      end = join[len(join) - 1].split("..")[1];
       return (start,end)
 
