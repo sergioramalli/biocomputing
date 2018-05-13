@@ -140,10 +140,8 @@ class RetriveData(object):
 
 	"""
 
-	def AcessGeneList (self):
-			
+	def AccessGeneList (self, returnType = 'genes'):
 		"""
-
 		This function will return a summary list of the gene identifier (gene name)
 		input = sql
 		output = a list containing all the  gene identifier (gene_name)
@@ -162,9 +160,15 @@ class RetriveData(object):
 	  	
 		db = DatabaseAccess();
 		result = db.Script_Execute(sql);
-		gene_list = [item['gene_name'] for item in result]
-					 
-		return(gene_list) #returning result as dictionary
+
+		if returnType == 'sequences' :
+
+			return result;
+
+		else:
+
+			gene_list = [item['gene_name'] for item in result]			 
+			return(gene_list) #returning result as dictionary
 
 			
 	def AccessChromLocList (self):
@@ -179,7 +183,7 @@ class RetriveData(object):
 		Chrom_Loc_list = []
 
 		# Create SQL statement to find list of chromosome locations of all the genes from Table Gene    
-		sql = "SELECT chromosome_loc From   Gene ORDER BY g.chromosome_loc "
+		sql = "SELECT chromosome_loc From   Gene ORDER BY chromosome_loc "
 
 		db = DatabaseAccess();
 		result = db.Script_Execute(sql);
@@ -200,7 +204,7 @@ class RetriveData(object):
 		accessionNo_list = []
 		
 		# Create SQL statement to find list of the gene from Table Gene
-		sql = "SELECT accession_number FROM Gene ORDER BY g.chromosome_loc"
+		sql = "SELECT accession_number FROM Gene ORDER BY chromosome_loc"
 
 		db = DatabaseAccess();
 		result = db.Script_Execute(sql);
@@ -395,7 +399,7 @@ class RetriveData(object):
 # x = RetriveData()
 
 # # These are the functions to provide the lists
-# print(x.AcessGeneList())
+# print(x.AccessGeneList())
 # print(x.AccessRestriction_Enz_List());
 # print(x.ProductNameList())
 # print(x.AccessChromLocList())

@@ -40,7 +40,11 @@ try:
 
 			if _GET['type'] == 'genes':
 
-				data = database.AcessGeneList();	
+				data = database.AccessGeneList();
+
+			elif _GET['type'] == 'sequences':
+
+				data = database.AccessGeneList('sequences');	
 
 			elif _GET['type'] == 'accessions':
 

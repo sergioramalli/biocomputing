@@ -63,8 +63,6 @@
 
             <div class="col-md-6">
 
-                <strong><span id="data_img"></span></strong>
-                <br><br>
                 <div id="data_json" class="col-md-11">
                     <img class="img-fluid" id="img_dna" src="https://psmag.com/.image/t_share/MTI3NTgxOTUzNTk4NzIzMzQ2/gene-expression.jpg" alt="">
                 </div>
@@ -118,12 +116,11 @@
                         
                         <div class="form-group">
                             <label for="search-input" id="search-label">Select via drop box <span class="type-label"></span></label>
-                            <select class="custom-select">
+                            <select class="custom-select" id="search-input-option">
                                 <option value="gene-identifier">Gene Identifier</option>
                                 <option value="product">Protein Product</option>
                                 <option value="genbank">GenBank Accession</option>
                                 <option value="location">Chromosomal Location</option>
-                                <option value="restriction-enzyme">Restriction Enzyme</option>
                             </select>
                         </div>
 
@@ -162,15 +159,19 @@
     searchItem = 'gene';
     val = 'example';
     JAV_URL = 'http://localhost/json/output.py';
+    itemUrl = JAV_URL;
 
     var getLists = function(type){
 
         url = JAV_URL + "?get=list&type=" + type
 
         list = $('#search-input-list');
+        option = $('#search-input-option');
+
         input = $('#search-input');
 
         list.empty();
+        option.empty();
 
         $.ajax({
 
@@ -186,6 +187,7 @@
                         if (!result['data'].hasOwnProperty(key)) continue;
 
                         list.append($("<option />").val(result['data'][key]));
+                        option.append( $("<option />").attr("value", result['data'][key] ).text(result['data'][key]) );
                         input.attr("placeholder", "search " + type);
                         
                     }
@@ -203,6 +205,9 @@
         $('#form_test').submit(function(event){
 
             event.preventDefault();
+
+            alert();
+
             val = $('#search-input').val();
             url = JAV_URL + "json/"+ searchItem +"/" + val;
 
@@ -229,7 +234,6 @@
                     }
                     $('#data_json').text(result['result'][1]['features']['cds']['translation']);
 
-                
                 }
 
             });    
@@ -242,7 +246,6 @@
 
         $('#select-output').change(function(event){
 
-            alert($(this).val());
             switch($(this).val()) {
 
                 case "gene-identifier":
@@ -285,8 +288,7 @@
 
             }
 
-            url = "http://turingrepublic.com/api/json/"+ searchItem +"/" + val;
-            $('#data_img').html(url);
+            itemUrl = JAV_URL +"/?type="+ searchItem + "&term="+ val;
 
         });
 

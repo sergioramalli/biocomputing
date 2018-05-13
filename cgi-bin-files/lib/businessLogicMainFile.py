@@ -40,7 +40,7 @@ class middleLayerApi(object):
     def getAllGenes(self):
 
         """ accesses DB and returns list of all genes A-Z """
-        geneList = self.accessLayer.AcessGeneList()
+        geneList = self.accessLayer.AccessGeneList()
         return(geneList)
 
     def getAllProteins(self):
