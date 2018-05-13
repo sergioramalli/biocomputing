@@ -152,7 +152,13 @@ class RetriveData(object):
 		gene_list = []
 		
 		# Create SQL statement to find list of the gene from Table Gene
-		sql = "SELECT gene_name From   Gene" 
+		sql ="""SELECT g.gene_id, g.gene_name, s.gDNA, g.chromosome_loc
+				FROM Gene g, Sequence s, Protein p 
+				WHERE g.gene_id = s.gene_id 
+				AND  s.sequence_id  = p.sequence_id 
+				ORDER BY g.chromosome_loc, g.gene_id
+				"""
+
 	  	
 		db = DatabaseAccess();
 		result = db.Script_Execute(sql);
@@ -173,7 +179,7 @@ class RetriveData(object):
 		Chrom_Loc_list = []
 
 		# Create SQL statement to find list of chromosome locations of all the genes from Table Gene    
-		sql = "SELECT chromosome_loc From   Gene"
+		sql = "SELECT chromosome_loc From   Gene ORDER BY g.chromosome_loc "
 
 		db = DatabaseAccess();
 		result = db.Script_Execute(sql);
@@ -194,7 +200,7 @@ class RetriveData(object):
 		accessionNo_list = []
 		
 		# Create SQL statement to find list of the gene from Table Gene
-		sql = "SELECT accession_number From   Gene"
+		sql = "SELECT accession_number FROM Gene ORDER BY g.chromosome_loc"
 
 		db = DatabaseAccess();
 		result = db.Script_Execute(sql);
