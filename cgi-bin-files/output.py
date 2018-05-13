@@ -14,9 +14,9 @@ from home import getUrl
 print("Content-Type: application/json")  
 print()             
 print()               
-cgitb.enable() #for debugging
+# cgitb.enable() #for debugging
 
-debug = False;
+debug = True;
 
 try:
 
@@ -100,6 +100,8 @@ try:
 
 except Exception as e:
 
+	print(e)
+	exit();
 	result = False;
 	message = str(e);
 

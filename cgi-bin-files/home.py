@@ -11,9 +11,9 @@ def getUrl(debug):
 
 	if debug:
 		_GET = "get=single&type=location&term=15q22";
-		_GET = "get=single&type=gene&term=CILP";
 		_GET = "get=single&type=accession&term=AB022430";
 		_GET = "get=single&type=protein-product&term=cartilage%20intermediate%20layer%20protein";
+		_GET = "get=single&type=gene&term=CILP";
 	else:
 		_GET = os.getenv("QUERY_STRING")
 

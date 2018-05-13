@@ -79,7 +79,7 @@ class middleLayerApi(object):
 
                 sequenceInfo = self.accessLayer.AccessSeqData_AccNo(x['accession_number'])[0]
                 returnObject[xx] = {
-                    # 'sequenceInfo' :retrieveSequenceAnalysis(sequenceInfo),
+                    'sequenceInfo' : self.retrieveSequenceAnalysis(sequenceInfo),
                     'basicInfo' : basicInfo[0]
                 };
                 xx += 1;
@@ -94,7 +94,7 @@ class middleLayerApi(object):
 
             sequenceInfo = self.accessLayer.AccessSeqData_AccNo(key)[0]
             returnObject[0] = {
-                # 'sequenceInfo' :retrieveSequenceAnalysis(sequenceInfo),
+                'sequenceInfo' : self.retrieveSequenceAnalysis(sequenceInfo),
                 'basicInfo' : basicInfo[0]
             };
 
@@ -107,7 +107,7 @@ class middleLayerApi(object):
 
                 sequenceInfo = self.accessLayer.AccessSeqData_AccNo(x['accession_number'])[0]
                 returnObject[xx] = {
-                    # 'sequenceInfo' :retrieveSequenceAnalysis(sequenceInfo),
+                    'sequenceInfo' : self.retrieveSequenceAnalysis(sequenceInfo),
                     'basicInfo' : basicInfo[0]
                 };
                 xx += 1;
@@ -125,7 +125,7 @@ class middleLayerApi(object):
 
                 sequenceInfo = self.accessLayer.AccessSeqData_AccNo(x['accession_number'])[0]
                 returnObject[xx] = {
-                    # 'sequenceInfo' :retrieveSequenceAnalysis(sequenceInfo),
+                    'sequenceInfo' : self.retrieveSequenceAnalysis(sequenceInfo),
                     'basicInfo' : basicInfo[0]
                 };
                 xx += 1;
@@ -147,10 +147,9 @@ class middleLayerApi(object):
         try:
 
             CDSjoin = sequenceInfo['CDS_join'];
-            codingRegion = BL.cdsJoin(CDSjoin)
+            codingRegion = self.BL.cdsJoin(CDSjoin)
 
             if not codingRegion[0].isnumeric():
-                print(codingRegion);
                 raise ValueError('couldnt find coding region of gene');
 
             if not codingRegion[1].isnumeric():
@@ -162,12 +161,12 @@ class middleLayerApi(object):
             parsedSequence = sequenceInfo['gDNA']
 
             #processing data with functions created in businessLogic.py - all of them contain 'return' statements so none required here.
-            codingRegion = BL.codingRegion(start,end,parsedSequence)
-            mrnaSequence = BL.translate(codingRegion)
-            splitSequence = BL.CodonSequence(mrnaSequence)
-            translatedAndAligned = BL.alignseq(splitSequence)
-            justAminoAcids = BL.translatedSequence(splitSequence)#check this
-            codonFrequency = BL.codonFreq(splitSequence)# need to edit to incorporate total frequencies
+            codingRegion = self.BL.codingRegion(start,end,parsedSequence)
+            mrnaSequence = self.BL.translate(codingRegion)
+            splitSequence = self.BL.CodonSequence(mrnaSequence)
+            translatedAndAligned = self.BL.alignseq(splitSequence)
+            justAminoAcids = self.BL.translatedSequence(splitSequence)#check this
+            codonFrequency = self.BL.codonFreq(splitSequence)# need to edit to incorporate total frequencies
 
             return({
                 'error' : False,
@@ -182,7 +181,7 @@ class middleLayerApi(object):
         except Exception as e:
 
             return({
-                'error' : e,
+                'error' : str(e),
                 'codingRegion' : '', 
                 'mRnaSequence' : '', 
                 'splitSequence' : '', 
