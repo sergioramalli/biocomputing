@@ -150,7 +150,7 @@ class RetriveData(object):
 		gene_list = []
 		
 		# Create SQL statement to find list of the gene from Table Gene
-		sql ="""SELECT g.gene_id, g.gene_name, s.gDNA, g.chromosome_loc
+		sql ="""SELECT g.gene_id, g.gene_name, s.gDNA, g.chromosome_loc, g.accession_number
 				FROM Gene g, Sequence s, Protein p 
 				WHERE g.gene_id = s.gene_id 
 				AND  s.sequence_id  = p.sequence_id 
