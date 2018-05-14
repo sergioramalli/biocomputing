@@ -233,7 +233,7 @@ def alignseq(aminoacid):
             lower += code
         else:
             pass
-    return (upper, lower)
+    return ({'upper': upper, 'lower' : lower})
 
 
 

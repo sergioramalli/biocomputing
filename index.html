@@ -56,7 +56,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="json/output.py/?get=list&type=locations">API/CGI Output</a>
+                        <a class="nav-link" href="json/output.py/?get=list&type=locations">API/CGI Output Example</a>
                     </li>
                 </ul>
             </div>
@@ -67,8 +67,8 @@
     <div class="container">
 
         <!-- Portfolio Item Heading -->
-        <h1 class="my-4">Bioinformatics
-            <small>Quick Preview</small>
+        <h1 class="my-4">Bioinformatics 
+            <small>Bio-Computing Coursework</small>
         </h1>
 
         <!-- Portfolio Item Row -->
@@ -112,6 +112,24 @@
 
                 <hr>
 
+                <datalist id="search-input-list">
+                </datalist>
+
+                <form id="result-enzyme">
+
+                    <div class="form-group">
+
+                        <label for="search-input">Search Restriction Enzymes Cut Sites</label>
+                        <input list="search-input-list" id="search-input" placeholder="search" class="form-control">
+
+                    </div>
+
+                    <button class="btn btn-info">Submit</button>
+                    <br>
+                    <br>
+
+                </form>
+
                 <div>
 
                     <p>Coding Region<br>
@@ -126,8 +144,12 @@
                         <small><span id="result-splitSequence"></span></small>
                     </p>
 
-                    <p>Translated And Aligned<br>
-                        <small><span id="result-translatedAndAligned"></span></small>
+                    <p>Translated And Aligned Upper<br>
+                        <small><span id="result-translatedAndAligned-upper"></span></small>
+                    </p>
+
+                    <p>Translated And Aligned Lower<br>
+                        <small><span id="result-translatedAndAligned-lower"></span></small>
                     </p>
 
                     <p>Just Amino Acids<br>
@@ -168,7 +190,6 @@
                             <option value="product">Protein Product</option>
                             <option value="genbank">GenBank Accession</option>
                             <option value="location">Chromosomal Location</option>
-                            <option value="restriction-enzyme">Restriction Enzyme</option>
                         </select>
                     </div>
 
@@ -177,20 +198,12 @@
                 <br>
                 <div class="row clear"></div>
 
-                <datalist id="search-input-list">
-                </datalist>
-
                 <form id="form_test">
 
                     <div class="form-group">
-
-                        <label for="search-input" id="search-label">Text Search <span class="type-label"></span></label>
-                        <input list="search-input-list" id="search-input" placeholder="search" class="form-control">
-
-                        <br>
                         
                         <div class="form-group">
-                            <label for="search-input" id="search-label">Or Select via drop box <span class="type-label"></span></label>
+                            <label for="search-input-option" id="search-label">Select via drop box <span class="type-label"></span></label>
                             <select class="custom-select" id="search-input-option">
                             </select>
                         </div>
@@ -242,16 +255,32 @@
     JAV_URL = 'http://localhost/json/output.py';
     itemUrl = JAV_URL;
 
+    var renderBasicHtml = function(info){
+
+        $('#result-accession').html(info['accession_number']);
+        $('#result-chromosome_loc').html(info['chromosome_loc']);
+        $('#result-gene_name').html(info['gene_name']);
+        $('#result-product-name').html(info['product_name']);
+
+    } 
+
+    var renderSequenceHtml = function(info){
+
+        $('#result-codingRegion').html( info['codingRegion'] );
+        $('#result-mRnaSequence').html(info['mRnaSequence']);
+        $('#result-splitSequence').html(info['splitSequence']);
+        $('#result-translatedAndAligned-upper').html(info['translatedAndAligned']['upper']);
+        $('#result-translatedAndAligned-lower').html(info['translatedAndAligned']['lower']);
+        $('#result-justAminoAcids').html(info['justAminoAcids']);
+        $('#result-codonFrequency').html(info['codonFrequency']);
+
+    }
+
     var getLists = function(type){
 
         url = JAV_URL + "?get=list&type=" + type
-
-        list = $('#search-input-list');
         option = $('#search-input-option');
 
-        input = $('#search-input');
-
-        list.empty();
         option.empty();
 
         $.ajax({
@@ -267,9 +296,8 @@
                         // skip loop if the property is from prototype
                         if (!result['data'].hasOwnProperty(key)) continue;
 
-                        list.append($("<option />").val(result['data'][key]));
                         option.append( $("<option />").attr("value", result['data'][key] ).text(result['data'][key]) );
-                        input.attr("placeholder", "search " + type);
+                        $('#type-label').text(type);
                         
                     }
 
@@ -281,86 +309,119 @@
 
     };
 
-    $.ajax({
+    $(document).ready(function(event){
 
-        url: JAV_URL + "?get=list&type=sequences",
-        dataType: 'json',
-        success: function(result){
+        url = JAV_URL + "?get=list&type=restriction-enzymes"
+        list = $('#search-input-list');
 
-            html = '<table class="table table-bordered">' +
-                        '<thead>' +
-                            '<tr>' +
-                                '<th width="10%">Accession</th><th width="10%">Gene</th><th width="10%">Location</th><th width="70%">gDNA</th>'+
-                            '</tr>' +
-                        '</thead><tbody>';
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            success: function(result){
 
-            if(result['result'] == true){
+                console.log(result);
+ 
+                if(result['result'] == true){
 
-                for (var key in result['data']) {
+                    for (var key in result['data']) {
 
-                    // skip loop if the property is from prototype
-                    if (!result['data'].hasOwnProperty(key)) continue;
-                    
-                    html = html +'<tr><td><a href="" data-id="'+result['data'][key]['accession_number']+'" class="select-gene-td">'+result['data'][key]['accession_number']+'</a></td>' +
-                    '<td>'+result['data'][key]['gene_name']+'</td><td>' + result['data'][key]['chromosome_loc'] + '</td>'+ 
-                    '<td>'+result['data'][key]['gDNA'].substr(0, 35) +'...</td></tr>';
+                        // skip loop if the property is from prototype
+                        if (!result['data'].hasOwnProperty(key)) continue;
+                        list.append($("<option />").text(result['data'][key]['RE_name'] + ' Cut Site; ' + result['data'][key]['cut_site'])).val(result['data'][key]['cut_site']);
+                        
+                    }
 
-                }
+                } 
+            }
+        });
 
-                html = html + '</tbody></table>';
-                $('#data_json').html(html);
+        $.ajax({
 
-            } 
+            url: JAV_URL + "?get=list&type=sequences",
+            dataType: 'json',
+            success: function(result){
 
-        }
+                html = '<table class="table table-bordered">' +
+                            '<thead>' +
+                                '<tr>' +
+                                    '<th width="10%">Accession</th><th width="10%">Gene</th><th width="10%">Location</th><th width="70%">gDNA</th>'+
+                                '</tr>' +
+                            '</thead><tbody>';
 
-    }); 
+                if(result['result'] == true){
 
-    var renderBasicHtml = function(info){
+                    for (var key in result['data']) {
 
-        $('#result-accession').html(info['accession_number']);
-        $('#result-chromosome_loc').html(info['chromosome_loc']);
-        $('#result-gene_name').html(info['gene_name']);
-        $('#result-product-name').html(info['product_name']);
+                        // skip loop if the property is from prototype
+                        if (!result['data'].hasOwnProperty(key)) continue;
+                        
+                        html = html +'<tr><td><a href="" data-id="'+result['data'][key]['accession_number']+'" class="select-gene-td">'+result['data'][key]['accession_number']+'</a></td>' +
+                        '<td>'+result['data'][key]['gene_name']+'</td><td>' + result['data'][key]['chromosome_loc'] + '</td>'+ 
+                        '<td>'+result['data'][key]['gDNA'].substr(0, 35) +'...</td></tr>';
 
-    } 
+                    }
 
-    var renderSequenceHtml = function(info){
-        
-        $('#result-codingRegion').html( info['codingRegion'] );
-        $('#result-mRnaSequence').html(info['mRnaSequence']);
-        $('#result-splitSequence').html(info['splitSequence']);
-        $('#result-translatedAndAligned').html(info['translatedAndAligned']);
-        $('#result-justAminoAcids').html(info['justAminoAcids']);
-        $('#result-codonFrequency').html(info['codonFrequency']);
+                    html = html + '</tbody></table>';
+                    $('#data_json').html(html);
 
-    }
-
-    url = JAV_URL + '?get=single&type=accession&term=JN245882';
-
-    $.ajax({
-
-        url: url,
-        dataType: 'json',
-        success: function(result){
-
-            if(result['result'] == true){
-
-                $("html, body").animate({ scrollTop: 0 }, "slow");
-                renderBasicHtml(result['data'][0]['basicInfo']);
-                renderSequenceHtml(result['data'][0]['sequenceInfo']);
-
-            }else{
-
-                alert(result['message']);
+                } 
 
             }
 
-        }
+        }); 
 
-    });  
+        url = JAV_URL + '?get=single&type=accession&term=JN245882';
 
-    $(document).ready(function(event){
+        $.ajax({
+
+            url: url,
+            dataType: 'json',
+            success: function(result){
+
+                if(result['result'] == true){
+
+                    $("html, body").animate({ scrollTop: 0 }, "slow");
+                    renderBasicHtml(result['data'][0]['basicInfo']);
+                    renderSequenceHtml(result['data'][0]['sequenceInfo']);
+
+                }else{
+
+                    alert(result['message']);
+
+                }
+
+            }
+
+        });  
+
+        $('#search-input-option').change(function(event){
+
+            url = JAV_URL + '?get=single&type='+searchItem+'&term=' + $(this).val();
+            $.ajax({
+
+                url: url,
+                dataType: 'json',
+                success: function(result){
+
+                    if(result['result'] == true){
+
+                        $("html, body").animate({ scrollTop: 0 }, "slow");
+                        renderBasicHtml(result['data'][0]['basicInfo']);
+                        renderSequenceHtml(result['data'][0]['sequenceInfo']);
+
+                    }else{
+
+                        console.log('here');
+                        console.log(result);
+                        alert(result['message']);
+
+                    }
+
+                }
+
+            });
+
+        })
 
         $(document).on("click", '.select-gene-td', function(event){
             
@@ -400,44 +461,6 @@
 
         });
 
-        $('#form_test').submit(function(event){
-
-            event.preventDefault();
-
-            alert();
-
-            val = $('#search-input').val();
-            url = JAV_URL + "json/"+ searchItem +"/" + val;
-
-            console.log(url);
-
-            // alert(url);
-            
-            if(!val){
-
-                // alert('please provide ID');
-                // return false;
-
-            }
-
-            $.ajax({
-
-                url: url,
-                dataType: 'json',
-                success: function(result){
-
-                    if(!result['result']){
-                        alert('no result found');
-                        return false;
-                    }
-                    $('#data_json').text(result['result'][1]['features']['cds']['translation']);
-
-                }
-
-            });    
-            
-        });
-
         getLists("genes");
         $('#search-label').html('Search Gene identifier');
         searchItem = 'gene';
@@ -457,14 +480,14 @@
 
                     getLists("protein-products");
                     $('#search-label').html('Search Protein Product');
-                    searchItem = 'protein';
+                    searchItem = 'protein-product';
                     break;
 
                 case "genbank":
 
                     getLists("accessions");
                     $('#search-label').html('Seach genBank entry');
-                    searchItem = 'genbank';
+                    searchItem = 'accession';
                     break;
 
                 case "location":
@@ -472,13 +495,6 @@
                     getLists("locations");
                     $('#search-label').html('search between Chromosomal locations');
                     searchItem = 'location';
-                    break;
-
-                case "restriction-enzyme":
-
-                    getLists("restriction-enzymes");
-                    $('#search-label').html('search between Chromosomal locations');
-                    searchItem = 'restriction-enzyme';
                     break;
 
                 default:
