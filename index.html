@@ -167,7 +167,7 @@
 
             <div class="col-sm-4">
 
-                <h3 class="my-3">Project Description</h3>
+                <h3 class="my-3">Search Based On Type</h3>
                 <p id="response_object">A quick demo of a restful api, with the api you would be able to search these elements</p>
                 <ul>
 
@@ -179,9 +179,9 @@
 
                 </ul>
 
-                <h3 class="my-3">Form Ajax form example</h3>
+                <h3 class="my-3">Select Here</h3>
 
-                <form class="form-inline" method="post" action="http://turingrepublic.com/scores/insert.php"> 
+                <form class="form-inline"> 
 
                     <div class="form-group">
                         <label >Select Call</label>
@@ -216,7 +216,8 @@
 
             <div class="col-sm-12">
                 
-                <h3 class="my-3">Select Gene</h3>
+                <h3 class="my-3">Search By Gene</h3>
+                <p>Select a gene accession to view information pertaining that gene<p/>
 
                 <div id="data_json">
                     <img class="img-fluid" id="img_dna" src="https://psmag.com/.image/t_share/MTI3NTgxOTUzNTk4NzIzMzQ2/gene-expression.jpg" alt="">
@@ -318,8 +319,6 @@
             url: url,
             dataType: 'json',
             success: function(result){
-
-                console.log(result);
  
                 if(result['result'] == true){
 
@@ -394,6 +393,14 @@
 
         });  
 
+        $('#result-enzyme').submit(function(event){
+
+            event.preventDefault();
+            alert('Your attempt to search the cut site for ' + $('#search-input').val() + ' was not completed as this function wasnt fully available in the middle layers api');
+
+
+        });
+
         $('#search-input-option').change(function(event){
 
             url = JAV_URL + '?get=single&type='+searchItem+'&term=' + $(this).val();
@@ -439,7 +446,7 @@
 
                         if(result['data'][0]['sequenceInfo']['error'] != false){
 
-                            alert('There was an error retrieving this item: please try another ');
+                            alert('There was an error retrieving this item as parsing of every type CDS join sequence is a known issue. Please try another. e.g AJ005332');
 
                         }else{
 
