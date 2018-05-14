@@ -1,3 +1,42 @@
+<!---
+
+Program:        chromosome_CDS_15 genome browser
+File:           home.py
+Version:        V10
+Date:           14.05.2018
+Function:       The html page which interactions with the cgi script to display information to the end user 
+Copyright:                  Sergio Gomes Simoes
+Author:                     Sergio Gomes Simoes
+project_collaborators:      Sarah Griffiths, Archana Patil, Fabio Biond
+Address:                    Bioinformatics, BBK, London
+-------------------------------------------------------------
+
+Description:
+==============
+This page is built dynamicaly to interact with the cgi-script. Via a javascript and jquery it makes requests via ajax 
+
+Displays all the information to the end as a block in the div id=result. 
+
+View information from gene, accessions, chromosomal locations, restriction enzymes and protein product lists 
+
+also view information on a single gene, accessions, chromosomal locations and protein product
+
+Please note the ids of div that start with result - e.g result-translatedAndAligned-upper. Display information pertain to the name as suggested. 
+This is done via a call to the cgi-script and use of jquery 
+
+uses bootstrap for templating and jquery for functionallity 
+
+---------------------------------------------------------------
+Usage:
+===========
+To interact with chromosomal 15 as per requirments 
+-----------------------------------------------------------------
+Revision History:
+=================
+V1.0   Original                                                     BY: Sergio Gomes
+
+
+-->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,27 +54,7 @@
 
     <!-- Custom styles for this template -->
     <link href="css/portfolio-item.css" rel="stylesheet">
-
-    <style type="text/css">
-        
-        div#data_json {
-            overflow: hidden;
-        }
-
-        .select-gene-td{
-            color:blue;
-            cursor: pointer; 
-        }
-
-        #result-output{
-            word-wrap: break-word;
-        }
-
-        .tdSequence{
-            word-wrap: break-word;
-        }
-
-    </style>
+    <link href="css/main.css" rel="stylesheet">
 
 </head>
 
@@ -43,13 +62,18 @@
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+
         <div class="container">
+
             <a class="navbar-brand" href="#">Bioinformatics Demo</a>
+
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
+
                 <ul class="navbar-nav ml-auto">
+
                     <li class="nav-item active">
                         <a class="nav-link" href="#">Home
                             <span class="sr-only">(current)</span>
@@ -58,9 +82,13 @@
                     <li class="nav-item">
                         <a class="nav-link" href="json/output.py/?get=list&type=locations">API/CGI Output Example</a>
                     </li>
+
                 </ul>
+
             </div>
+
         </div>
+
     </nav>
 
     <!-- Page Content -->
@@ -78,7 +106,8 @@
 
                 <h3 class="my-3">Results will output here</h3>
 
-                <div id="results">
+                <!-- the result of single search item are shown here -->
+                <div id="results"> 
 
                     <br>
                     <h5>Accession:
@@ -115,6 +144,7 @@
                 <datalist id="search-input-list">
                 </datalist>
 
+                <!-- form needed to search restriction enzyme cut site --> 
                 <form id="result-enzyme">
 
                     <div class="form-group">
@@ -124,6 +154,7 @@
 
                     </div>
 
+                    <!-- button to submit the form for the restriction enzyme -->
                     <button class="btn btn-info">Submit</button>
                     <br>
                     <br>
@@ -183,6 +214,7 @@
 
                 <form class="form-inline"> 
 
+                    <!-- Block to select with type of item you want to select -->
                     <div class="form-group">
                         <label >Select Call</label>
                         <select class="custom-select" name="team_1" id="select-output">
@@ -202,6 +234,7 @@
 
                     <div class="form-group">
                         
+                        <!-- the list of items selected from the id="select-output are" outputted here-->  
                         <div class="form-group">
                             <label for="search-input-option" id="search-label">Select via drop box <span class="type-label"></span></label>
                             <select class="custom-select" id="search-input-option">
@@ -220,7 +253,7 @@
                 <p>Select a gene accession to view information pertaining that gene<p/>
 
                 <div id="data_json">
-                    <img class="img-fluid" id="img_dna" src="https://psmag.com/.image/t_share/MTI3NTgxOTUzNTk4NzIzMzQ2/gene-expression.jpg" alt="">
+
                 </div>
 
             </div>
@@ -251,11 +284,25 @@
 
 <script type="text/javascript">
 
-    searchItem = 'gene';
-    val = 'example';
-    JAV_URL = 'http://localhost/json/output.py';
-    itemUrl = JAV_URL;
+    //I use a number of event listiners that respond to a varitey of events 
+    //on click, on select, submit etc.., these events are based on id's and classes 
+    //I explain here as to reduce the need to explain on every line where found 
 
+    //This blocks sets a number of important variables required to make code below work correctly 
+    var searchItem = 'gene';
+    var val = '';
+    var JAV_URL = 'http://localhost/json/output.py';
+    var itemUrl = JAV_URL;
+
+    /**
+    *
+    * This function add the relavent information for display within the relevant divs, 
+    *
+    * @param info :basic information relating to a gene/accession/protein/or location (takes a single result)
+    *
+    * @return null 
+    *
+    **/
     var renderBasicHtml = function(info){
 
         $('#result-accession').html(info['accession_number']);
@@ -265,6 +312,15 @@
 
     } 
 
+    /**
+    *
+    * This function add the relavent information for display within the relevant divs, as it pertains to sequence information
+    *
+    * @param info :basic information relating to a gene/accession/protein/or location (takes a single result)
+    *
+    * @return null 
+    *
+    **/
     var renderSequenceHtml = function(info){
 
         $('#result-codingRegion').html( info['codingRegion'] );
@@ -277,6 +333,15 @@
 
     }
 
+    /**
+    *
+    * Runs a ajax call to the cgi script and then display information in select drop down for later selection and searching
+    *
+    * @param type :gene/accession/location/enzyme/protein-product
+    *
+    * @return null 
+    *
+    **/
     var getLists = function(type){
 
         url = JAV_URL + "?get=list&type=" + type
@@ -312,9 +377,9 @@
 
     $(document).ready(function(event){
 
-        url = JAV_URL + "?get=list&type=restriction-enzymes"
+        //On page load this block adds the restriction enzyme information to select list 
         list = $('#search-input-list');
-
+        url = JAV_URL + "?get=list&type=restriction-enzymes"
         $.ajax({
             url: url,
             dataType: 'json',
@@ -334,6 +399,7 @@
             }
         });
 
+        //Creates a table with the full list of genes extracted from the db 
         $.ajax({
 
             url: JAV_URL + "?get=list&type=sequences",
@@ -369,8 +435,9 @@
 
         }); 
 
+        //Makes the first request to cgi the db from a gene, for when the page loads
+        //i.e default search result 
         url = JAV_URL + '?get=single&type=accession&term=JN245882';
-
         $.ajax({
 
             url: url,
@@ -393,6 +460,7 @@
 
         });  
 
+        //Incomplete function for searching the enzyme cut sites 
         $('#result-enzyme').submit(function(event){
 
             event.preventDefault();
@@ -401,6 +469,7 @@
 
         });
 
+        //searches a single term for example gene type=accession&term=JN245882 based on a selection of drop box 
         $('#search-input-option').change(function(event){
 
             url = JAV_URL + '?get=single&type='+searchItem+'&term=' + $(this).val();
@@ -418,8 +487,6 @@
 
                     }else{
 
-                        console.log('here');
-                        console.log(result);
                         alert(result['message']);
 
                     }
@@ -430,6 +497,7 @@
 
         })
 
+        //Based on clicking on a accession code in the table, this then makes a call to the DB for the single term 
         $(document).on("click", '.select-gene-td', function(event){
             
             event.preventDefault();
@@ -468,10 +536,12 @@
 
         });
 
+        //Gets the first list on page load 
         getLists("genes");
         $('#search-label').html('Search Gene identifier');
         searchItem = 'gene';
 
+        //This block helps set the url for the json requests to the server 
         $('#select-output').change(function(event){
 
             switch($(this).val()) {

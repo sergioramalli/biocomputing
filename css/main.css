@@ -1,0 +1,16 @@
+div#data_json {
+    overflow: hidden;
+}
+
+.select-gene-td{
+    color:blue;
+    cursor: pointer; 
+}
+
+#result-output{
+    word-wrap: break-word;
+}
+
+.tdSequence{
+    word-wrap: break-word;
+}
