@@ -99,6 +99,21 @@ V1.0   Original                                                     BY: Sergio G
             <small>Bio-Computing Coursework</small>
         </h1>
 
+        <p>There are two ways to use this page,</p>
+        <p>1) Select a accession code from the table displayed below</p>
+        <br>
+        <p>
+            2) Select the type list you wish to search on the left. i.e genes identifier, protein-product, genBank Accession or Chromosomal Location,
+            <br>
+            Then in the drop box below select the item you wish to search,
+         </p>
+
+
+         <br>
+         <p>Both methods will cause the results to appear below in the under the title "Results will output here"</p>
+
+        <hr>
+
         <!-- Portfolio Item Row -->
         <div class="row">
 
@@ -149,7 +164,7 @@ V1.0   Original                                                     BY: Sergio G
 
                     <div class="form-group">
 
-                        <label for="search-input">Search Restriction Enzymes Cut Sites</label>
+                        <label for="search-input">Search Restriction Enzymes Cut Sites, type in the box below and click submit to start</label>
                         <input list="search-input-list" id="search-input" placeholder="search" class="form-control">
 
                     </div>
@@ -199,7 +214,7 @@ V1.0   Original                                                     BY: Sergio G
             <div class="col-sm-4">
 
                 <h3 class="my-3">Search Based On Type</h3>
-                <p id="response_object">A quick demo of a restful api, with the api you would be able to search these elements</p>
+                <p class="my-3">First Select which list you wish to search here i.e </p>
                 <ul>
 
                     <li>Gene identifier</li>
@@ -210,7 +225,7 @@ V1.0   Original                                                     BY: Sergio G
 
                 </ul>
 
-                <h3 class="my-3">Select Here</h3>
+                <br>
 
                 <form class="form-inline"> 
 
@@ -236,7 +251,7 @@ V1.0   Original                                                     BY: Sergio G
                         
                         <!-- the list of items selected from the id="select-output are" outputted here-->  
                         <div class="form-group">
-                            <label for="search-input-option" id="search-label">Select via drop box <span class="type-label"></span></label>
+                            <label for="search-input-option" id="search-label"></label>
                             <select class="custom-select" id="search-input-option">
                             </select>
                         </div>
@@ -538,7 +553,7 @@ V1.0   Original                                                     BY: Sergio G
 
         //Gets the first list on page load 
         getLists("genes");
-        $('#search-label').html('Search Gene identifier');
+        $('#search-label').html('Then Select item via drop box for Gene identifier');
         searchItem = 'gene';
 
         //This block helps set the url for the json requests to the server 
@@ -549,28 +564,28 @@ V1.0   Original                                                     BY: Sergio G
                 case "gene-identifier":
 
                     getLists("genes");
-                    $('#search-label').html('Search Gene identifier');
+                    $('#search-label').html('Then Select item via drop box for Gene identifier');
                     searchItem = 'gene';
                     break;
 
                 case "product":
 
                     getLists("protein-products");
-                    $('#search-label').html('Search Protein Product');
+                    $('#search-label').html('Then Select item via drop box for Protein Product');
                     searchItem = 'protein-product';
                     break;
 
                 case "genbank":
 
                     getLists("accessions");
-                    $('#search-label').html('Seach genBank entry');
+                    $('#search-label').html('Then Select item via drop box for genBank entry');
                     searchItem = 'accession';
                     break;
 
                 case "location":
 
                     getLists("locations");
-                    $('#search-label').html('search between Chromosomal locations');
+                    $('#search-label').html('Then Select item via drop box for Chromosomal locations');
                     searchItem = 'location';
                     break;
 
