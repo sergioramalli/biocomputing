@@ -1,6 +1,7 @@
-# biocomputing coursework @ birkbeck 
+# Biocomputing coursework @ birkbeck 
 
-# A collerative group project which is outlined below, full details can be found here http://bioinf.org.uk/teaching/bbk/biocomp2/project/index.html
+A collerative group project which is outlined below, full details can be found here http://bioinf.org.uk/teaching/bbk/biocomp2/project/index.html
+
 
 You will create a simple genome browser to look at genes in a given human chromosome. You will need to load the Genbank sequence data into a database and provide a web front end that allows you to view and query the data. You will also provide the ability to identify restriction enzyme cut sites within the DNA.
 
